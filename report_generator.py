@@ -1,6 +1,6 @@
 """
-report_generator.py — HarvestBridge quarterly report generator
-Blue accent theme, sample-matching layout.
+report_generator.py - HarvestBridge quarterly report generator
+Blue accent theme
 """
 
 from pptx import Presentation
@@ -14,8 +14,8 @@ import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 import numpy as np
 
-# ── Colour palette ────────────────────────────────────────────────
-BLUE        = RGBColor(0x1A, 0x5C, 0xA8)   # primary — section labels, underlines, icons
+# Colour palette 
+BLUE        = RGBColor(0x1A, 0x5C, 0xA8)   # primary - section labels, underlines, icons
 DARK_BLUE   = RGBColor(0x0D, 0x3A, 0x6E)   # header bar background
 LIGHT_BLUE  = RGBColor(0xE8, 0xF0, 0xFA)   # subtle tint if needed
 GOLD        = RGBColor(0xC9, 0xA8, 0x3C)   # EBITDA bars
@@ -34,7 +34,7 @@ SLIDE_W = Inches(13.33)
 SLIDE_H = Inches(7.5)
 
 
-# ── Drawing helpers ───────────────────────────────────────────────
+# Drawing helpers 
 
 def rect(slide, x, y, w, h, fill=None, line=None):
     s = slide.shapes.add_shape(1, x, y, w, h)
@@ -72,7 +72,7 @@ def section_label(slide, text, x, y, w):
     rect(slide, x, y + Inches(0.22), w, Inches(0.016), fill=BLUE)
 
 
-# ── Formatters ────────────────────────────────────────────────────
+# Formatters 
 
 def fusd(v):
     if v is None: return "N/A"
@@ -100,7 +100,7 @@ def fmt_kpi_pct(v):
     return f"{f*100:.0f}%" if f <= 1.0 else f"{f:.0f}%"
 
 
-# ── Icons (matplotlib, blue theme) ───────────────────────────────
+# Icons (matplotlib, blue theme) 
 
 def _save_fig(fig, dpi=120):
     tmp = tempfile.NamedTemporaryFile(suffix=".png", delete=False)
@@ -162,7 +162,7 @@ def icon_revenue():
 ICON_FUNCS = [icon_loans, icon_women, icon_tractor, icon_revenue]
 
 
-# ── Logo ──────────────────────────────────────────────────────────
+# Logo 
 
 def make_logo():
     fig, ax = plt.subplots(figsize=(1.5, 0.38))
@@ -178,7 +178,7 @@ def make_logo():
     return tmp.name
 
 
-# ── Bar chart ─────────────────────────────────────────────────────
+# Bar chart 
 
 def make_chart(quarters, fin_hist, new_label, new_rev, new_ebitda):
     labels  = quarters + [new_label]
@@ -230,7 +230,7 @@ def make_chart(quarters, fin_hist, new_label, new_rev, new_ebitda):
     return tmp.name
 
 
-# ── Main ──────────────────────────────────────────────────────────
+# Main 
 
 def generate_report(financials_calc, kpis, quarter_label, prior_label,
                     company_info, historical_financials, historical_quarters):
@@ -243,7 +243,7 @@ def generate_report(financials_calc, kpis, quarter_label, prior_label,
 
     rect(slide, 0, 0, SLIDE_W, SLIDE_H, fill=WHITE)
 
-    # ── HEADER ───────────────────────────────────────────────────
+    # HEADER 
     hdr_h = Inches(0.44)
     rect(slide, 0, 0, SLIDE_W, hdr_h, fill=DARK_BLUE)
     tb(slide,
@@ -251,14 +251,14 @@ def generate_report(financials_calc, kpis, quarter_label, prior_label,
        Inches(0.18), Inches(0.08), Inches(10), Inches(0.32),
        size=14, bold=True, color=WHITE)
 
-    # ── COLUMN SETUP ─────────────────────────────────────────────
+    # COLUMN SETUP 
     col_y   = Inches(0.52)
     left_x  = Inches(0.18)
     left_w  = Inches(6.28)
     right_x = Inches(6.72)
     right_w = Inches(6.44)
 
-    # ── LEFT — RAG indicators (matching sample position) ──────────
+    # LEFT  RAG indicators 
     rag_items = [("Runway","●●●●"),("M&G","●●●●"),("EBITDA+","●●●"),("Exit readiness","●●●●")]
     rag_h  = Inches(0.30)
     box_w  = Inches(1.44)
@@ -281,7 +281,8 @@ def generate_report(financials_calc, kpis, quarter_label, prior_label,
         tb(slide, f"{lbl}  {dots}", bx+Inches(0.07), by+Inches(0.03),
            rag_box_w-Inches(0.09), Inches(0.15),
            size=6, bold=False, color=DARK_GRAY)
-    # ── RIGHT — Logo (top right, same row as RAG) ─────────────────
+
+    # RIGHT - Logo (top right, same row as RAG)
     logo_path = make_logo()
     tmp_files.append(logo_path)
     slide.shapes.add_picture(logo_path,
@@ -293,13 +294,13 @@ def generate_report(financials_calc, kpis, quarter_label, prior_label,
     # Vertical divider
     rect(slide, Inches(6.62), col_y, Inches(0.014), Inches(6.6), fill=LIGHT_GRAY)
 
-    # ── LEFT — Description ───────────────────────────────────────
+    # LEFT - Description
     section_label(slide, "Description of the Business", left_x, col_y, left_w)
     tb(slide, company_info.get("description",""),
        left_x, col_y+Inches(0.28), left_w, Inches(0.92),
        size=7.8, color=DARK_GRAY, wrap=True)
 
-    # ── LEFT — Company Impact ────────────────────────────────────
+    # LEFT - Company Impact 
     imp_y = col_y + Inches(1.26)
     section_label(slide, "Company Impact", left_x, imp_y, left_w)
     imp_y += Inches(0.28)
@@ -319,7 +320,7 @@ def generate_report(financials_calc, kpis, quarter_label, prior_label,
         (3, fusd(financials_calc["total_revenue"]),  f"{quarter_label} revenue", rev_qoq),
     ]
 
-    # Card dimensions — taller to give breathing room
+    # Card dimensions - taller to give breathing room
     cw   = (left_w - Inches(0.06)) / 4
     ch   = Inches(1.12)
     cgap = Inches(0.02)
@@ -327,17 +328,17 @@ def generate_report(financials_calc, kpis, quarter_label, prior_label,
     for idx, val, lbl, qval in cards:
         cx = left_x + idx*(cw+cgap)
 
-        # Card — white background, light border, no shadow
+        # Card - white background, light border, no shadow
         rect(slide, cx, imp_y, cw, ch, fill=WHITE, line=BORDER)
 
-        # Icon — top left
+        # Icon - top left
         icon_path = ICON_FUNCS[idx]()
         tmp_files.append(icon_path)
         slide.shapes.add_picture(icon_path,
             cx+Inches(0.07), imp_y+Inches(0.06),
             Inches(0.30), Inches(0.30))
 
-        # Value — large, bold
+        # Value - large, bold
         tb(slide, val,
            cx+Inches(0.07), imp_y+Inches(0.38),
            cw-Inches(0.1), Inches(0.3),
@@ -349,7 +350,7 @@ def generate_report(financials_calc, kpis, quarter_label, prior_label,
            cw-Inches(0.1), Inches(0.16),
            size=6.5, color=MID_GRAY)
 
-    # ── Quarter to quarter row ────────────────────────────────────
+    # Quarter to quarter row 
     qtq_y = imp_y + ch + Inches(0.02)
     qtq_h = Inches(0.36)
     rect(slide, left_x, qtq_y, left_w, qtq_h, fill=WHITE)
@@ -372,7 +373,7 @@ def generate_report(financials_calc, kpis, quarter_label, prior_label,
 
     rect(slide, left_x, qtq_y+qtq_h, left_w, Inches(0.012), fill=LIGHT_GRAY)
 
-    # ── Growth since investment row ───────────────────────────────
+    # Growth since investment row
     gsi_y = qtq_y + qtq_h + Inches(0.012)
     gsi_h = Inches(0.36)
     rect(slide, left_x, gsi_y, left_w, gsi_h, fill=OFF_WHITE)
@@ -406,7 +407,7 @@ def generate_report(financials_calc, kpis, quarter_label, prior_label,
        Inches(0.44), Inches(7.26), Inches(6.2), Inches(0.18),
        size=7, color=MID_GRAY)
 
-    # ── RIGHT — Valuation section ─────────────────────────────────
+    # RIGHT — Valuation section
     section_label(slide, "Investment Manager's Update on Valuation and Exit",
                   right_x, col_y, right_w)
 
@@ -415,12 +416,12 @@ def generate_report(financials_calc, kpis, quarter_label, prior_label,
         f"Alitheia invested USD 3.50M as Series B lead, acquiring a {company_info['stake']}. "
         f"NAV is marked at USD 4.20M (1.2x cost), reflecting first-quarter profitability and "
         f"strong EBITDA trajectory. No active exit process at this stage; the investment is "
-        f"expected to be held for 4–5 years with a target exit via strategic sale or secondary.")
+        f"expected to be held for 4 - 5 years with a target exit via strategic sale or secondary.")
     tb(slide, val_text,
        right_x, col_y+Inches(0.28), right_w, Inches(0.95),
        size=7.8, color=DARK_GRAY, wrap=True)
 
-    # ── RIGHT — Bar chart ─────────────────────────────────────────
+    # RIGHT - Bar chart 
     chart_y = col_y + Inches(1.28)
     chart_h = Inches(2.55)
     chart_path = make_chart(
@@ -432,7 +433,7 @@ def generate_report(financials_calc, kpis, quarter_label, prior_label,
     tmp_files.append(chart_path)
     slide.shapes.add_picture(chart_path, right_x, chart_y, right_w, chart_h)
 
-    # ── RIGHT — Outlook ───────────────────────────────────────────
+    # RIGHT - Outlook 
     out_y = chart_y + chart_h + Inches(0.08)
     section_label(slide, "Investment Manager's Outlook and Value Addition",
                   right_x, out_y, right_w)
@@ -442,7 +443,7 @@ def generate_report(financials_calc, kpis, quarter_label, prior_label,
         f"{fusd(financials_calc['net_income'])} and EBITDA of {fusd(financials_calc['ebitda'])} "
         f"({fpct(financials_calc['ebitda_margin'])} margin), validating the operating model's "
         f"scalability. The underlying drivers — improving gross margins "
-        f"({fpct(financials_calc['gross_margin'])}), disciplined opex management — are durable.\n\n"
+        f"({fpct(financials_calc['gross_margin'])}), disciplined opex management - are durable.\n\n"
         f"Management is focused on scaling loan disbursements toward 200,000 annually by FY2027, "
         f"deepening Kenya penetration, and extending the SaaS platform. Alitheia continues to "
         f"support gender lens reporting, board-level governance, and the company's path to a "

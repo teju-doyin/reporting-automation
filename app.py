@@ -53,7 +53,7 @@ st.info(
     icon="ℹ️"
 )
 
-# ── Quarter label ─────────────────────────────────────────────────
+#  Quarter label 
 q_col, _ = st.columns([1, 4])
 with q_col:
     quarter_label = st.text_input("Quarter label", value="Q2 2026",
@@ -61,7 +61,7 @@ with q_col:
 
 st.markdown("---")
 
-# ── Input tabs ────────────────────────────────────────────────────
+#  Input tabs 
 tab_fin, tab_kpi = st.tabs(["📊 Financial Inputs (USD '000)", "📈 KPI Inputs"])
 
 with tab_fin:
@@ -118,7 +118,7 @@ with tab_kpi:
     saas_u   = s1.number_input("Active SaaS users",             value=0,   step=100)
     distrib  = s2.number_input("Distributor partners (total)",  value=0,   step=1)
 
-# ── Assemble dicts ────────────────────────────────────────────────
+#  Assemble dicts 
 inputs = {
     "loan_fees": loan_fees, "saas_revenue": saas_rev,
     "insurance_commissions": insurance, "other_income": other,
@@ -146,7 +146,7 @@ kpis = {
     "distributor_partners":     distrib,
 }
 
-# ── Live preview ──────────────────────────────────────────────────
+#  Live preview 
 st.markdown("---")
 st.markdown('<div class="sec">Calculated Metrics Preview</div>', unsafe_allow_html=True)
 
@@ -165,15 +165,14 @@ m5.metric("Net Income",    fusd(fin["net_income"]),
           f"{fqoq(fin.get('net_income_qoq'))} QoQ"
           if fin.get("net_income_qoq") else "")
 
-# ── Generate ──────────────────────────────────────────────────────
+#  Generate 
 st.markdown("---")
 if st.button("⬇️  Generate PowerPoint Report"):
 
-    # Narrative built from available data
     prior_label = "Q1 2026"
     female_pct = round(female_fte / fte * 100, 1) if fte and female_fte else 0
 
-    # ── Pull historical figures for YoY comparisons ───────────────
+    #  Pull historical figures for YoY comparisons 
     def _qoq(a, b): return (a - b) / abs(b) if b and b != 0 else None
     def _fqoq_plain(v): return f"{'+' if v>=0 else ''}{v*100:.1f}%" if v is not None else None
     def _fusd_plain(v): return f"USD {v/1000:.2f}M" if abs(v)>=1000 else f"USD {v:.0f}K"
@@ -193,7 +192,7 @@ if st.button("⬇️  Generate PowerPoint Report"):
     yoy_net     = hist_net.get(yoy_label)
     gm_bps      = int((fin["gross_margin"] - yoy_gm) * 10000) if yoy_gm else None
 
-    # ── Paragraph 1 — Revenue ─────────────────────────────────────
+    #  Paragraph 1 — Revenue 
     p1 = f"In {quarter_label}, HarvestBridge generated {_fusd_plain(fin['total_revenue'])} in total revenue"
     comps = []
     if yoy_rev is not None:
@@ -207,7 +206,7 @@ if st.button("⬇️  Generate PowerPoint Report"):
     if yoy_ins is not None:
         p1 += f" Insurance commissions grew {_fqoq_plain(yoy_ins)} YoY as the embedded crop insurance product deepened penetration across the existing borrower base."
 
-    # ── Paragraph 2 — Profitability ───────────────────────────────
+    #  Paragraph 2 — Profitability 
     p2 = f"Profitability improved materially. Gross profit reached {_fusd_plain(fin['gross_profit'])}, reflecting a gross margin of {fpct(fin['gross_margin'])}"
     if gm_bps is not None:
         direction = "up" if gm_bps > 0 else "down"
@@ -220,7 +219,7 @@ if st.button("⬇️  Generate PowerPoint Report"):
     else:
         p2 += f". Net income of {_fusd_plain(fin['net_income'])}."
 
-    # ── Paragraph 3 — Workforce ───────────────────────────────────
+    #  Paragraph 3 — Workforce 
     p3 = ""
     if fte:
         p3 = f"Workforce stood at {fte} FTE with {female_pct}% female representation."

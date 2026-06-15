@@ -20,7 +20,7 @@ def calculate_financials(inputs: dict, prior_quarter: dict) -> dict:
     ebitda        = gross_profit - total_opex
     ebitda_margin = ebitda / total_revenue if total_revenue else 0
     ebit          = ebitda - inputs["depreciation_amortisation"]
-    # Below-the-line items are signed — brackets in Excel = negative number = add directly
+    # Below-the-line items are signed (brackets in Excel = negative number)
     net_income    = ebit + inputs["interest_expense"] + inputs["fx_loss"] + inputs["income_tax"]
 
     def qoq(current, key):
@@ -59,7 +59,7 @@ def calculate_financials(inputs: dict, prior_quarter: dict) -> dict:
     }
 
 
-# ── Q1 2026 actuals — prior quarter for Q2 2026 comparison ───────
+# Q1 2026 actuals — prior quarter for Q2 2026 comparison
 Q1_2026_ACTUALS = {
     "total_revenue": 3820.0,
     "gross_profit":  2190.0,
@@ -70,7 +70,7 @@ Q1_2026_ACTUALS = {
     "ebitda_margin":  0.2448,
 }
 
-# ── Historical revenue + EBITDA for bar chart ─────────────────────
+# Historical revenue + EBITDA for bar chart 
 HISTORICAL = {
     "labels":  ["Q1 2025", "Q2 2025", "Q3 2025", "Q4 2025", "Q1 2026"],
     "revenue": [2800.0,    3060.0,    3305.0,    3675.0,    3820.0],
